@@ -13,9 +13,9 @@ import (
 )
 
 type Worker struct {
-	Id       string
-	mq       *mq.Mq
 	cfg      *model.WorkerCfg
+	Id       string
+	Mq       *mq.Mq
 	Registed bool
 }
 
@@ -62,8 +62,8 @@ func (worker *Worker) Init(
 	}
 
 	reportWorkerStatusTopic := fmt.Sprintf(mqCfg.ReportWorkerStatusTopicFormat, worker.Id)
-	worker.mq = &mq.Mq{}
-	if err := worker.mq.Init(
+	worker.Mq = &mq.Mq{}
+	if err := worker.Mq.Init(
 		worker.Id,
 		mqCfg.Urls,
 		mqCfg.Name,
@@ -90,7 +90,7 @@ func (worker *Worker) run(ctx context.Context) {
 		case <-ctx.Done():
 			return
 
-		case connected := <-worker.mq.Ready:
+		case connected := <-worker.Mq.Ready:
 			if !connected {
 				slog.Warn("worker mqtt disconnected, broker may send will msg to notify offline")
 				continue
@@ -152,11 +152,11 @@ func (worker *Worker) register(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	respPayload, err := worker.mq.RpcRequest(
+	respPayload, err := worker.Mq.RpcRequest(
 		ctx,
 		&paho.Publish{
 			QoS:     0,
-			Topic:   worker.mq.ReportWorkerStatusTopic,
+			Topic:   worker.Mq.ReportWorkerStatusTopic,
 			Payload: payload,
 			Retain:  true,
 		},
