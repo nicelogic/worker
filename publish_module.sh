@@ -1,9 +1,9 @@
 #!/bin/bash
 
-version="v1.1.5"
+version="v1.1.6"
 
 git add .
-git commit
+git commit -m "update version: $version"
 git tag $version
 echo "update version: $version"
 git push origin $version
