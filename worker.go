@@ -156,7 +156,7 @@ func (worker *Worker) register(ctx context.Context) error {
 	respPayload, err := worker.mq.RpcRequest(
 		ctx,
 		&paho.Publish{
-			QoS:     1,
+			QoS:     0,
 			Topic:   worker.mq.ReportWorkerStatusTopic,
 			Payload: payload,
 			Retain:  true,

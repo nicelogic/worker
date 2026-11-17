@@ -58,8 +58,8 @@ func (m *Mq) Init(
 	if err != nil {
 		return err
 	}
-
 	// WillMsgDelayInterval := uint32(30)
+	willMessageExpiry := uint32(3 * 24 * 60 * 60)
 	m.Ready = make(chan bool, 1)
 
 	mqBrokerUrls := []*url.URL{}
@@ -89,6 +89,7 @@ func (m *Mq) Init(
 		WillProperties: &paho.WillProperties{
 			// 允许短暂断线重连，避免瞬时断线就注销 Worker。
 			// WillDelayInterval: &WillMsgDelayInterval,
+			MessageExpiry: &willMessageExpiry,
 		},
 		OnConnectionUp: func(cm *autopaho.ConnectionManager, connAck *paho.Connack) {
 			slog.Info("mqtt connection up")
