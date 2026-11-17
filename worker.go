@@ -7,8 +7,6 @@ import (
 	"log/slog"
 	"time"
 
-	"uuid"
-
 	"github.com/eclipse/paho.golang/paho"
 	"github.com/nicelogic/worker/model"
 	"github.com/nicelogic/worker/mq"
@@ -22,11 +20,20 @@ type Worker struct {
 }
 
 func (worker *Worker) Init(
-	mqCfg *model.MqCfg,
 	workerCfg *model.WorkerCfg,
+	mqCfg *model.MqCfg,
 	ctx context.Context,
 ) error {
 	//check part
+	if workerCfg == nil || workerCfg.Type == "" {
+		return fmt.Errorf("workerCfg.Type is empty")
+	}
+	if workerCfg.Id == "" {
+		return fmt.Errorf("workerCfg.Id is empty")
+	}
+	if workerCfg.MaxTasks <= 0 {
+		return fmt.Errorf("workerCfg.MaxTasks must be greater than zero")
+	}
 	if mqCfg == nil {
 		return fmt.Errorf("mqCfg is nil")
 	}
@@ -39,17 +46,9 @@ func (worker *Worker) Init(
 	if len(mqCfg.Handlers) == 0 {
 		return fmt.Errorf("mqCfg.Handlers is empty")
 	}
-	if workerCfg == nil || workerCfg.Type == "" {
-		return fmt.Errorf("workerCfg.Type is empty")
-	}
-	if workerCfg.MaxTasks <= 0 {
-		return fmt.Errorf("workerCfg.MaxTasks must be greater than zero")
-	}
 	//====
 
-	uuid := uuid.New().String()
-	id := workerCfg.Type + "-" + uuid
-	worker.Id = id
+	worker.Id = workerCfg.Id
 	worker.cfg = workerCfg
 	router := paho.NewStandardRouter()
 	router.DefaultHandler(func(p *paho.Publish) {

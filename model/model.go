@@ -11,8 +11,9 @@ type MqCfg struct {
 }
 
 type WorkerCfg struct {
-	Type     string
-	MaxTasks int
+	Type     string `json:"type"`
+	Id       string `json:"id"`
+	MaxTasks int    `json:"maxTasks"`
 }
 
 type WorkerStatus struct {
