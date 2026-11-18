@@ -143,6 +143,7 @@ func (worker *Worker) registerWithRetry(ctx context.Context) {
 func (worker *Worker) register(ctx context.Context) error {
 
 	payload, err := json.Marshal(model.WorkerStatus{
+		Type:     worker.cfg.Type,
 		Id:       worker.cfg.Id,
 		Version:  worker.cfg.Version,
 		MaxTasks: worker.cfg.MaxTasks,

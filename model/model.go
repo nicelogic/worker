@@ -18,6 +18,7 @@ type WorkerCfg struct {
 }
 
 type WorkerStatus struct {
+	Type     string `json:"type"`
 	Id       string `json:"id"`
 	Version  string `json:"version"`
 	MaxTasks int    `json:"maxTasks"`
