@@ -14,7 +14,6 @@ import (
 
 type Worker struct {
 	cfg      *model.WorkerCfg
-	Id       string
 	Mq       *mq.Mq
 	Registed bool
 }
@@ -48,7 +47,6 @@ func (worker *Worker) Init(
 	}
 	//====
 
-	worker.Id = workerCfg.Id
 	worker.cfg = workerCfg
 	router := paho.NewStandardRouter()
 	router.DefaultHandler(func(p *paho.Publish) {
@@ -61,10 +59,10 @@ func (worker *Worker) Init(
 		router.RegisterHandler(topic, handler)
 	}
 
-	reportWorkerStatusTopic := fmt.Sprintf(mqCfg.ReportWorkerStatusTopicFormat, worker.Id)
+	reportWorkerStatusTopic := fmt.Sprintf(mqCfg.ReportWorkerStatusTopicFormat, worker.cfg.Id)
 	worker.Mq = &mq.Mq{}
 	if err := worker.Mq.Init(
-		worker.Id,
+		worker.cfg.Id,
 		mqCfg.Urls,
 		mqCfg.Name,
 		mqCfg.Pwd,
@@ -114,12 +112,12 @@ func (worker *Worker) registerWithRetry(ctx context.Context) {
 
 		if err := worker.register(ctx); err == nil {
 			slog.Info("worker registered successfully",
-				"id", worker.cfg.Type,
+				"id", worker.cfg.Id,
 			)
 			return
 		} else {
 			slog.Error("worker register failed",
-				"id", worker.Id,
+				"id", worker.cfg.Id,
 				"err", err,
 				"retryAfter", delay,
 			)
@@ -145,7 +143,8 @@ func (worker *Worker) registerWithRetry(ctx context.Context) {
 func (worker *Worker) register(ctx context.Context) error {
 
 	payload, err := json.Marshal(model.WorkerStatus{
-		Id:       worker.Id,
+		Id:       worker.cfg.Id,
+		Version:  worker.cfg.Version,
 		MaxTasks: worker.cfg.MaxTasks,
 		Online:   true,
 	})

@@ -13,11 +13,13 @@ type MqCfg struct {
 type WorkerCfg struct {
 	Type     string `json:"type"`
 	Id       string `json:"id"`
+	Version  string `json:"version"`
 	MaxTasks int    `json:"maxTasks"`
 }
 
 type WorkerStatus struct {
 	Id       string `json:"id"`
+	Version  string `json:"version"`
 	MaxTasks int    `json:"maxTasks"`
 	Online   bool   `json:"online"`
 }
