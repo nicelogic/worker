@@ -59,7 +59,7 @@ func (m *Mq) Init(
 		return err
 	}
 	// WillMsgDelayInterval := uint32(30)
-	willMessageExpiry := uint32(30 * 24 * 60 * 60)
+	willMessageExpiry := uint32(3 * 24 * 60 * 60)
 	m.Ready = make(chan bool, 1)
 
 	mqBrokerUrls := []*url.URL{}

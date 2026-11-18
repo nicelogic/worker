@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="v1.1.6"
+version="v1.1.7"
 
 git add .
 git commit -m "update version: $version"
